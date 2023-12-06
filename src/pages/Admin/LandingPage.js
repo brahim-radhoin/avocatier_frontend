@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../style/avoListStyle.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import sha1 from "js-sha1";
 
 import { MDBTable, MDBTableHead, MDBTableBody, MDBBtn, MDBBadge } from "mdb-react-ui-kit";
 
@@ -9,30 +10,42 @@ const AvoTable = () => {
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/avos")
-      .then((response) => response.json())
-      .then((data) => setAvos(data));
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => setAvos(data))
+      .catch((error) => console.error("There has been a problem with your fetch operation: ", error));
   }, []);
 
+  // const activateAvo = (id_av) => {
+  //   fetch(`http://127.0.0.1:8000/api/email/verify/${id_av}/hash`, {
+  //     method: "GET",
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setAvos(avos.map((avo) => (avo.id_av === id_av ? data : avo)));
+  //     });
+  // };
 
-  fetch('http://127.0.0.1:8000/api/avos')
-      .then(response => {
-          if (!response.ok) {
-              throw new Error('Network response was not ok');
-          }
-          return response.json();
-      })
-      .then(data => setAvos(data))
-      .catch(error => console.error('There has been a problem with your fetch operation: ', error));
-
-
-
-  const activateAvo = (id_av) => {
-    fetch(`http://127.0.0.1:8000/api/email/verify/${id_av}/hash`, {
+  const activateAvo = (avo) => {
+    const hash = sha1(avo.email);
+    const token = localStorage.getItem("token");
+    fetch(`http://127.0.0.1:8000/api/email/verify/${avo.id_av}/${hash}`, {
       method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+        "Content-Type": "application/json", // Set the content type if required
+      },
     })
       .then((response) => response.json())
       .then((data) => {
-        setAvos(avos.map((avo) => (avo.id_av === id_av ? data : avo)));
+        setAvos(avos.map((item) => (item.id_av === avo.id_av ? data : item)));
+      })
+      .catch((error) => {
+        console.error("There has been a problem with your fetch operation: ", error);
       });
   };
 
@@ -65,7 +78,7 @@ const AvoTable = () => {
               </MDBBadge>
             </td>
             <td>
-              <MDBBtn color="link" rounded size="sm" onClick={() => activateAvo(avo.id_av)}>
+              <MDBBtn color="link" rounded size="sm" onClick={() => activateAvo(avo)}>
                 Activate
               </MDBBtn>
             </td>

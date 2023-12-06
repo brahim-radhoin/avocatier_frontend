@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Col, Button, Row, Container, Card, Form } from "react-bootstrap";
+import Navbar from "./Components/Navbar";
 
 const SignupPage = () => {
   const [firstName, setFirstName] = useState("");
@@ -41,6 +42,7 @@ const SignupPage = () => {
 
   return (
     <div>
+      {/* <Navbar /> */}
       <Container>
         <Row className="vh-100 d-flex justify-content-center align-items-center">
           <Col md={8} lg={6} xs={12}>
@@ -48,7 +50,7 @@ const SignupPage = () => {
             <Card className="shadow">
               <Card.Body>
                 <div className="mb-3 mt-md-4">
-                  <h2 className="fw-bold mb-2 text-uppercase ">AVOCATIER</h2>
+                  <h2 className="fw-bold mb-2 text-uppercase ">Bienvenue</h2>
                   <p className=" mb-5">SVP entrer votre email et mot de passe!</p>
                   <div className="mb-3">
                     <Form onSubmit={handleSubmit}>

@@ -1,4 +1,4 @@
-import React, { useState, setError } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -20,8 +21,8 @@ const LoginPage = () => {
       });
 
       localStorage.setItem("token", response.data.token);
-
       const decodedToken = jwtDecode(response.data.token);
+      localStorage.setItem("User type", decodedToken.user_type);
       
       console.log("User type:", decodedToken.user_type);     // ! for debugging only remember to delete later 
       console.log("User id:", decodedToken.sub);             // ! for debugging only remember to delete later 
@@ -35,6 +36,7 @@ const LoginPage = () => {
       } else {
         navigate("/user_landing_page");
       }
+      setIsLoggedIn(true);
     } catch (error) {
       if (error.response && error.response.status === 401) {
         const errorMessage = "Email ou mote de passe incorrect";
@@ -47,6 +49,7 @@ const LoginPage = () => {
 
   return (
     <div>
+    {/* <Navbar/> */}
       <Container>
         <Row className="vh-100 d-flex justify-content-center align-items-center">
           <Col md={8} lg={6} xs={12}>
@@ -89,7 +92,7 @@ const LoginPage = () => {
                     <div className="mt-3">
                       <p className="mb-0  text-center">
                         Vous n'avez pas un compt ?{" "}
-                        <a href="/SignUp" className="text-primary fw-bold">
+                        <a href="/signup" className="text-primary fw-bold">
                           Cree un compt
                         </a>
                       </p>

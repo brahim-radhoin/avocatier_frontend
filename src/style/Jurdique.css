@@ -1,0 +1,55 @@
+.Avantage {
+  width: 100%;
+  padding: 6rem 1rem;
+  background: #b0e0e6;
+}
+
+.titre {
+  font-size: 1.8em;
+}
+
+.logo {
+  font-size: 3rem;
+}
+
+.card_c-container {
+  max-width: 1140px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.card_c {
+  border: 5px solid black;
+  color: black;
+  text-align: center;
+  padding: 1rem;
+}
+
+.card_c p {
+  padding: 10px 0;
+}
+
+.card_c:hover {
+  background-color: #87cefa;
+}
+.image {
+   max-width: 100%;
+   height: auto;
+  }
+  
+.btn_c {
+  display: block;
+  width: 80%;
+  margin: 2rem auto;
+  color: blueviolet;
+}
+
+@media screen and (max-width: 740px) {
+  .card_c-container {
+    max-width: 90%;
+    margin: auto;
+    grid-template-columns: 1fr;
+  }
+}

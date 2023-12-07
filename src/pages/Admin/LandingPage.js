@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../../style/avoListStyle.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import sha1 from "js-sha1";
+import axios from 'axios';
 
 import { MDBTable, MDBTableHead, MDBTableBody, MDBBtn, MDBBadge } from "mdb-react-ui-kit";
 
@@ -9,14 +10,10 @@ const AvoTable = () => {
   const [avos, setAvos] = useState([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/avos")
+    axios.get("http://127.0.0.1:8000/api/avos")
       .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
+        setAvos(response.data);
       })
-      .then((data) => setAvos(data))
       .catch((error) => console.error("There has been a problem with your fetch operation: ", error));
   }, []);
 
@@ -33,16 +30,14 @@ const AvoTable = () => {
   const activateAvo = (avo) => {
     const hash = sha1(avo.email);
     const token = localStorage.getItem("token");
-    fetch(`http://127.0.0.1:8000/api/email/verify/${avo.id_av}/${hash}`, {
-      method: "GET",
+    axios.get(`http://127.0.0.1:8000/api/email/verify/${avo.id_av}/${hash}`, {
       headers: {
         Authorization: `Bearer ${token}`, // Include the token in the Authorization header
         "Content-Type": "application/json", // Set the content type if required
       },
     })
-      .then((response) => response.json())
-      .then((data) => {
-        setAvos(avos.map((item) => (item.id_av === avo.id_av ? data : item)));
+      .then((response) => {
+        setAvos(avos.map((item) => (item.id_av === avo.id_av ? response.data : item)));
       })
       .catch((error) => {
         console.error("There has been a problem with your fetch operation: ", error);

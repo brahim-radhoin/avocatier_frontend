@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Col, Button, Row, Container, Card, Form } from "react-bootstrap";
-import Navbar from "./Components/Navbar";
+// import Navbar from "./Components/Navbar";
 
 const SignupPage = () => {
   const [firstName, setFirstName] = useState("");
@@ -11,12 +11,13 @@ const SignupPage = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
+  const [isAvo, setIsAvo] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/avo/register", {
+      const response = await axios.post(`http://127.0.0.1:8000/api/${isAvo ? 'avo' : 'user'}/register`, {
         first_name: firstName,
         last_name: lastName,
         email,
@@ -25,7 +26,7 @@ const SignupPage = () => {
       setErrors({});
 
       localStorage.setItem("token", response.data.token);
-      navigate("/avo_landing_page");
+      navigate(`${isAvo ? "/avo_landing_page" : "/user_landing_page"}`);
     } catch (error) {
       if (error.response && error.response.status === 422) {
         const serverErrors = error.response.data.errors;
@@ -91,6 +92,11 @@ const SignupPage = () => {
                         {errors.password && <p className="error">{errors.password}</p>}
                       </Form.Group>
 
+                      <Form.Group className="mb-3 left-align-label position-relative" controlId="formBasicIsAvo">
+                        <Form.Check className="position-absolute top-0 start-0 " type="checkbox" onChange={(e) => setIsAvo(e.target.checked)} />
+                        <Form.Label>Je suis un Avocat</Form.Label>
+                      </Form.Group>
+                      <br/><br/>
                       <div className="d-grid">
                         <Button variant="primary" type="submit">
                           Sign Up

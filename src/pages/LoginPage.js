@@ -4,12 +4,11 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { Col, Button, Row, Container, Card, Form } from "react-bootstrap";
 
-const LoginPage = () => {
+const LoginPage = ({ setIsLoggedIn }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -23,21 +22,22 @@ const LoginPage = () => {
       localStorage.setItem("token", response.data.token);
       const decodedToken = jwtDecode(response.data.token);
       localStorage.setItem("User type", decodedToken.user_type);
-      
-      console.log("User type:", decodedToken.user_type);     // ! for debugging only remember to delete later 
-      console.log("User id:", decodedToken.sub);             // ! for debugging only remember to delete later 
-      console.log("Decoded token:", decodedToken);           // ! for debugging only remember to delete later 
+
+      console.log("User type:", decodedToken.user_type); // ! for debugging only remember to delete later
+      console.log("User id:", decodedToken.sub);         // ! for debugging only remember to delete later
+      console.log("Decoded token:", decodedToken);       // ! for debugging only remember to delete later
+      setIsLoggedIn(true);
 
       setErrors({});
       if (decodedToken.user_type === "admin") {
-        navigate("/admin_landing_page");
+        navigate("/avo_table");
       } else if (decodedToken.user_type === "avo") {
         navigate("/avo_landing_page");
       } else {
         navigate("/user_landing_page");
       }
-      setIsLoggedIn(true);
     } catch (error) {
+      setIsLoggedIn(false);
       if (error.response && error.response.status === 401) {
         const errorMessage = "Email ou mote de passe incorrect";
         setErrors({ login: errorMessage });
@@ -49,7 +49,7 @@ const LoginPage = () => {
 
   return (
     <div>
-    {/* <Navbar/> */}
+      {/* <Navbar/> */}
       <Container>
         <Row className="vh-100 d-flex justify-content-center align-items-center">
           <Col md={8} lg={6} xs={12}>
